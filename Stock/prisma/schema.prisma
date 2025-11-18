@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model products {
+  id_product Int      @id @default(autoincrement())
+  id_user    Int?
+  name       String   @db.VarChar(255)
+  quantidade Int
+  preco      Float?   @db.Float
+  createdAt  DateTime @default(now()) @db.DateTime(0)
+  users      users?   @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_1")
+
+  @@index([id_user], map: "id_user")
+}
+
+model users {
+  id_user      Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  email        String     @unique(map: "email") @db.VarChar(255)
+  passwordHash String     @db.VarChar(255)
+  products     products[]
+}
