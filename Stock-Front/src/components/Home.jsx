@@ -107,8 +107,9 @@ const Home = ({ user, onProfileClick, onLogout }) => {
     try {
       await createProduct({
         name: data.name,
-        quantity: Number(data.quantity),
-        price: Number(data.price),
+        quantidade: Number(data.quantidade),
+        preco: Number(data.preco),
+        id_user: localStorage.getItem("token")
       });
       setIsCreateModalOpen(false);
       resetCreate();
@@ -126,8 +127,9 @@ const Home = ({ user, onProfileClick, onLogout }) => {
     try {
       await updateProduct(editingProduct.id || editingProduct.id_product, {
         name: data.name,
-        quantity: Number(data.quantity),
-        price: Number(data.price),
+        quantidade: Number(data.quantidade),
+        preco: Number(data.preco),
+        id_user: localStorage.getItem("token")
       });
       setIsEditModalOpen(false);
       setEditingProduct(null);
@@ -157,8 +159,9 @@ const Home = ({ user, onProfileClick, onLogout }) => {
     setEditingProduct(product);
     resetEdit({
       name: product.name,
-      quantity: String(product.quantity),
-      price: String(product.price),
+      quantidade: String(product.quantidade),
+      preco: String(product.preco),
+      id_user: localStorage.getItem("token")
     });
     setIsEditModalOpen(true);
   };
@@ -300,7 +303,7 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                   id="create-name"
                   {...registerCreate("name")}
                   placeholder="Nome do produto"
-                  className="h-11"
+                  className="h-11 bg-gray-300 outline-none border-none mt-2"
                 />
                 {errorsCreate.name && (
                   <p className="text-sm text-red-600">
@@ -311,14 +314,14 @@ const Home = ({ user, onProfileClick, onLogout }) => {
 
               <div className="space-y-2">
                 <Label htmlFor="create-quantity" className="text-sm font-semibold">
-                  Quantidade
+                  Quantidade em Estoque:
                 </Label>
                 <Input
                   id="create-quantity"
                   type="number"
                   {...registerCreate("quantity")}
                   placeholder="0"
-                  className="h-11"
+                  className="h-11 bg-gray-300 outline-none border-none mt-2"
                 />
                 {errorsCreate.quantity && (
                   <p className="text-sm text-red-600">
@@ -329,7 +332,7 @@ const Home = ({ user, onProfileClick, onLogout }) => {
 
               <div className="space-y-2">
                 <Label htmlFor="create-price" className="text-sm font-semibold">
-                  Preço
+                  Preço do Produto:
                 </Label>
                 <Input
                   id="create-price"
@@ -337,7 +340,7 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                   step="0.01"
                   {...registerCreate("price")}
                   placeholder="0.00"
-                  className="h-11"
+                  className="h-11 bg-gray-300 outline-none border-none mt-2"
                 />
                 {errorsCreate.price && (
                   <p className="text-sm text-red-600">
@@ -353,9 +356,9 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                 variant="outline"
                 onClick={() => setIsCreateModalOpen(false)}
                 disabled={isSubmitting}
-                className="text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 border-none hover:to-indigo-700"
               >
-                <span className="text-gray-700">Cancelar</span>
+                <span className="text-white font-semibold sh">Cancelar</span>
               </Button>
               <Button
                 type="submit"

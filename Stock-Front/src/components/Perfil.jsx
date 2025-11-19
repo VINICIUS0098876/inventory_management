@@ -82,10 +82,10 @@ const Perfil = ({ user, onBack, onLogout }) => {
                       <User className="h-10 w-10 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl text-gray-900 select-none">
+                      <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent select-none">
                         {userData?.name || user?.name || "Usuário"}
                       </CardTitle>
-                      <p className="text-gray-600 mt-1 select-none">
+                      <p className="text-gray-500 font-bold mt-1 select-none">
                         {userData?.email || user?.email || ""}
                       </p>
                     </div>
@@ -94,7 +94,7 @@ const Perfil = ({ user, onBack, onLogout }) => {
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="text-sm font-semibold text-gray-700">
+                      <label className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                         ID do Usuário
                       </label>
                       <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -105,7 +105,7 @@ const Perfil = ({ user, onBack, onLogout }) => {
                     </div>
 
                     <div>
-                      <label className="text-sm font-semibold text-gray-700">
+                      <label className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                         Nome Completo
                       </label>
                       <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -116,7 +116,7 @@ const Perfil = ({ user, onBack, onLogout }) => {
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="text-sm font-semibold text-gray-700">
+                      <label className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                         Email
                       </label>
                       <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">

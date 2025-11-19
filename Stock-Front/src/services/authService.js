@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "https://stock-backend-vv2x.onrender.com";
 
 /**
  * Realiza o cadastro de um novo usuário
