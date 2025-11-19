@@ -50,9 +50,10 @@ Arquitetura: **Service Layer Pattern**
 
 Coloque aqui as capturas de tela da interface após instalar a aplicação:
 
-> ![Dashboard Screenshot](path/to/dashboard.png)  
-> ![Login Screenshot](path/to/login.png)  
+# Tela Login:
+> ![Login Screenshot](Stock-Front/screenshots/login.png)  
 > ![Cadastro Screenshot](path/to/register.png)  
+> ![Dashboard Screenshot](path/to/login.png)  
 
 ---
 
