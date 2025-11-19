@@ -50,9 +50,11 @@ Arquitetura: **Service Layer Pattern**
 
 
 # Tela Login:
-> ![Login Screenshot](Stock-Front/screenshots/login.png)  
-> ![Cadastro Screenshot](path/to/register.png)  
-> ![Dashboard Screenshot](path/to/login.png)  
+> ![Login Screenshot](Stock-Front/screenshots/login.png)
+# Tela Cadastro:
+> ![Cadastro Screenshot](Stock-Front/screenshots/cadastro.png)
+# Tela Dashboard: 
+> ![Dashboard Screenshot](Stock-Front/screenshots/dashboard.png)  
 
 ---
 
