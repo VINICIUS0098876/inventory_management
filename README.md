@@ -48,7 +48,6 @@ Arquitetura: **Service Layer Pattern**
 
 ## 🖼️ Screenshots
 
-Coloque aqui as capturas de tela da interface após instalar a aplicação:
 
 # Tela Login:
 > ![Login Screenshot](Stock-Front/screenshots/login.png)  
