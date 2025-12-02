@@ -24,7 +24,13 @@ export class CreateProductController {
   async handle(request: AuthRequest, response: Response) {
     const { name, quantidade, preco } = request.body;
 
-    if (!name || !quantidade || !preco) {
+    if (
+      !name ||
+      quantidade === undefined ||
+      quantidade === null ||
+      preco === undefined ||
+      preco === null
+    ) {
       return response.status(400).json({ ...ERROR_REQUIRED_FIELDS });
     }
 
@@ -57,7 +63,15 @@ export class UpdateProductController {
     const id = Number(request.params.id);
     const { name, quantidade, preco } = request.body;
 
-    if (isNaN(id) || !id || !name || !quantidade || !preco) {
+    if (
+      isNaN(id) ||
+      !id ||
+      !name ||
+      quantidade === undefined ||
+      quantidade === null ||
+      preco === undefined ||
+      preco === null
+    ) {
       return response.status(400).json({ ...ERROR_REQUIRED_FIELDS });
     }
 
@@ -140,10 +154,14 @@ export class DeleteProductController {
 
 export class GetProductController {
   async handle(request: AuthRequest, response: Response) {
+    if (!request.userId) {
+      return response.status(401).json({ message: "Usuário não autenticado" });
+    }
+
     try {
       const getProductService = new GetProductService();
 
-      const product = await getProductService.execute();
+      const product = await getProductService.execute(request.userId);
 
       return response.status(200).json(product);
     } catch (error) {

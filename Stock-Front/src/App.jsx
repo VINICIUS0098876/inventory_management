@@ -31,6 +31,13 @@ function App() {
     setCurrentPage("home");
   };
 
+  const handleUserUpdate = (updatedUser) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      ...updatedUser,
+    }));
+  };
+
   if (!user) {
     if (currentView === "register") {
       return (
@@ -55,6 +62,7 @@ function App() {
         user={user}
         onBack={() => setCurrentPage("home")}
         onLogout={handleLogout}
+        onUserUpdate={handleUserUpdate}
       />
     );
   }

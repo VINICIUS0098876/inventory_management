@@ -32,7 +32,10 @@ import {
 } from "lucide-react";
 
 const productSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório").min(3, "Nome deve ter no mínimo 3 caracteres"),
+  name: z
+    .string()
+    .min(1, "Nome é obrigatório")
+    .min(3, "Nome deve ter no mínimo 3 caracteres"),
   quantity: z
     .string()
     .min(1, "Quantidade é obrigatória")
@@ -107,9 +110,8 @@ const Home = ({ user, onProfileClick, onLogout }) => {
     try {
       await createProduct({
         name: data.name,
-        quantidade: Number(data.quantidade),
-        preco: Number(data.preco),
-        id_user: localStorage.getItem("token")
+        quantidade: Number(data.quantity),
+        preco: Number(data.price),
       });
       setIsCreateModalOpen(false);
       resetCreate();
@@ -127,9 +129,8 @@ const Home = ({ user, onProfileClick, onLogout }) => {
     try {
       await updateProduct(editingProduct.id || editingProduct.id_product, {
         name: data.name,
-        quantidade: Number(data.quantidade),
-        preco: Number(data.preco),
-        id_user: localStorage.getItem("token")
+        quantidade: Number(data.quantity),
+        preco: Number(data.price),
       });
       setIsEditModalOpen(false);
       setEditingProduct(null);
@@ -159,16 +160,19 @@ const Home = ({ user, onProfileClick, onLogout }) => {
     setEditingProduct(product);
     resetEdit({
       name: product.name,
-      quantidade: String(product.quantidade),
-      preco: String(product.preco),
-      id_user: localStorage.getItem("token")
+      quantity: String(product.quantidade),
+      price: String(product.preco),
     });
     setIsEditModalOpen(true);
   };
 
   return (
     <div className="fixed inset-0 flex overflow-hidden bg-gray-50">
-      <Sidebar user={user} onProfileClick={onProfileClick} onLogout={onLogout} />
+      <Sidebar
+        user={user}
+        onProfileClick={onProfileClick}
+        onLogout={onLogout}
+      />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
@@ -243,13 +247,17 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Quantidade:</span>
                       <span className="text-sm font-semibold text-gray-900">
-                        {product.quantity}
+                        {product.quantidade}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Preço:</span>
                       <span className="text-sm font-semibold text-blue-600">
-                        R$ {Number(product.price).toFixed(2).replace(".", ",")}
+                        R${" "}
+                        {Number(product.preco).toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                     </div>
                   </div>
@@ -257,23 +265,21 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                   <div className="flex gap-2 pt-4 border-t border-gray-200">
                     <Button
                       onClick={() => openEditModal(product)}
-                      variant="outline"
                       size="sm"
-                      className="flex-1 text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold shadow-lg"
                     >
-                      <Edit className="mr-2 h-4 w-4 text-gray-700" />
-                      <span className="text-gray-700">Editar</span>
+                      <Edit className="mr-2 h-4 w-4 text-white" />
+                      <span className="text-white">Editar</span>
                     </Button>
                     <Button
                       onClick={() =>
                         handleDeleteProduct(product.id || product.id_product)
                       }
-                      variant="outline"
                       size="sm"
-                      className="flex-1 text-red-600 border-red-300 hover:text-red-700 hover:bg-red-50"
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold shadow-lg"
                     >
-                      <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                      <span className="text-red-600">Deletar</span>
+                      <Trash2 className="mr-2 h-4 w-4 text-white" />
+                      <span className="text-white">Deletar</span>
                     </Button>
                   </div>
                 </div>
@@ -313,7 +319,10 @@ const Home = ({ user, onProfileClick, onLogout }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="create-quantity" className="text-sm font-semibold">
+                <Label
+                  htmlFor="create-quantity"
+                  className="text-sm font-semibold"
+                >
                   Quantidade em Estoque:
                 </Label>
                 <Input
@@ -385,9 +394,7 @@ const Home = ({ user, onProfileClick, onLogout }) => {
           <DialogClose onClose={() => setIsEditModalOpen(false)} />
           <DialogHeader>
             <DialogTitle>Editar Produto</DialogTitle>
-            <DialogDescription>
-              Atualize os dados do produto
-            </DialogDescription>
+            <DialogDescription>Atualize os dados do produto</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmitEdit(handleEditProduct)}>
             <div className="space-y-4 mt-4">
@@ -399,7 +406,7 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                   id="edit-name"
                   {...registerEdit("name")}
                   placeholder="Nome do produto"
-                  className="h-11"
+                  className="h-11 bg-gray-300 outline-none border-none mt-2"
                 />
                 {errorsEdit.name && (
                   <p className="text-sm text-red-600">
@@ -409,15 +416,18 @@ const Home = ({ user, onProfileClick, onLogout }) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="edit-quantity" className="text-sm font-semibold">
-                  Quantidade
+                <Label
+                  htmlFor="edit-quantity"
+                  className="text-sm font-semibold"
+                >
+                  Quantidade em Estoque:
                 </Label>
                 <Input
                   id="edit-quantity"
                   type="number"
                   {...registerEdit("quantity")}
                   placeholder="0"
-                  className="h-11"
+                  className="h-11 bg-gray-300 outline-none border-none mt-2"
                 />
                 {errorsEdit.quantity && (
                   <p className="text-sm text-red-600">
@@ -428,7 +438,7 @@ const Home = ({ user, onProfileClick, onLogout }) => {
 
               <div className="space-y-2">
                 <Label htmlFor="edit-price" className="text-sm font-semibold">
-                  Preço
+                  Preço do Produto:
                 </Label>
                 <Input
                   id="edit-price"
@@ -436,7 +446,7 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                   step="0.01"
                   {...registerEdit("price")}
                   placeholder="0.00"
-                  className="h-11"
+                  className="h-11 bg-gray-300 outline-none border-none mt-2"
                 />
                 {errorsEdit.price && (
                   <p className="text-sm text-red-600">
@@ -452,9 +462,9 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                 variant="outline"
                 onClick={() => setIsEditModalOpen(false)}
                 disabled={isSubmitting}
-                className="text-gray-700 border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 border-none hover:to-indigo-700"
               >
-                <span className="text-gray-700">Cancelar</span>
+                <span className="text-white font-semibold">Cancelar</span>
               </Button>
               <Button
                 type="submit"
@@ -479,4 +489,3 @@ const Home = ({ user, onProfileClick, onLogout }) => {
 };
 
 export default Home;
-

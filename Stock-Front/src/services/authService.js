@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://stock-backend-vv2x.onrender.com";
+import api from "./api";
 
 /**
  * Realiza o cadastro de um novo usuário
@@ -9,28 +9,8 @@ const API_BASE_URL = "https://stock-backend-vv2x.onrender.com";
  * @throws {Error} - Erro caso o cadastro falhe
  */
 export const register = async (name, email, passwordHash) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/user`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, passwordHash }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Erro ao realizar cadastro");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("Erro de conexão com o servidor");
-  }
+  const { data } = await api.post("/user", { name, email, passwordHash });
+  return data;
 };
 
 /**
@@ -41,26 +21,6 @@ export const register = async (name, email, passwordHash) => {
  * @throws {Error} - Erro caso o login falhe
  */
 export const login = async (email, password) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, passwordHash: password }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Erro ao realizar login");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("Erro de conexão com o servidor");
-  }
+  const { data } = await api.post("/login", { email, passwordHash: password });
+  return data;
 };

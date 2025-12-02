@@ -1,11 +1,4 @@
-const API_BASE_URL = "https://stock-backend-vv2x.onrender.com";
-
-/**
- * Obtém o token do localStorage
- */
-const getToken = () => {
-  return localStorage.getItem("token");
-};
+import api from "./api";
 
 /**
  * Obtém dados do usuário por ID
@@ -14,28 +7,18 @@ const getToken = () => {
  * @throws {Error} - Erro caso a requisição falhe
  */
 export const getUserById = async (userId) => {
-  try {
-    const token = getToken();
-    const response = await fetch(`${API_BASE_URL}/user/${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Erro ao buscar usuário");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("Erro de conexão com o servidor");
-  }
+  const { data } = await api.get(`/user/${userId}`);
+  return data;
 };
 
+/**
+ * Atualiza dados do usuário
+ * @param {number} userId - ID do usuário
+ * @param {object} userData - Dados atualizados do usuário (name, email, passwordHash)
+ * @returns {Promise<object>} - Dados do usuário atualizado
+ * @throws {Error} - Erro caso a requisição falhe
+ */
+export const updateUser = async (userId, userData) => {
+  const { data } = await api.put(`/user/${userId}`, userData);
+  return data;
+};

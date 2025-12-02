@@ -26,7 +26,14 @@ export class CreateProductService {
     id_user,
   }: Product): Promise<CreateProductResult> {
     try {
-      if (!name || !quantidade || !preco || !id_user) {
+      if (
+        !name ||
+        quantidade === undefined ||
+        quantidade === null ||
+        preco === undefined ||
+        preco === null ||
+        !id_user
+      ) {
         return ERROR_REQUIRED_FIELDS;
       }
 
@@ -58,7 +65,15 @@ export class UpdateProductService {
     { name, quantidade, preco, id_user }: Product
   ): Promise<UpdateProductResult> {
     try {
-      if (!id_product || !name || !quantidade || !preco || !id_user) {
+      if (
+        !id_product ||
+        !name ||
+        quantidade === undefined ||
+        quantidade === null ||
+        preco === undefined ||
+        preco === null ||
+        !id_user
+      ) {
         return ERROR_REQUIRED_FIELDS;
       }
 
@@ -114,9 +129,13 @@ type GetProductResult =
   | typeof ERROR_INTERNAL_SERVER_DB;
 
 export class GetProductService {
-  async execute(): Promise<GetProductResult> {
+  async execute(id_user: number): Promise<GetProductResult> {
     try {
-      const product = await prismaClient.products.findMany();
+      const product = await prismaClient.products.findMany({
+        where: {
+          id_user,
+        },
+      });
 
       if (product.length === 0) {
         return ERROR_NOT_FOUND;

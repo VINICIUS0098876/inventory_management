@@ -67,7 +67,7 @@ export class UpdateUserController {
     const id = Number(request.params.id);
     const { name, email, passwordHash } = request.body;
 
-    if (isNaN(id) || !id || !name || !email || !passwordHash) {
+    if (isNaN(id) || !id || !name || !email) {
       return response.status(400).json({ ...ERROR_REQUIRED_FIELDS });
     }
 
@@ -82,7 +82,7 @@ export class UpdateUserController {
       const user = await updateUserService.execute(id, {
         name,
         email,
-        passwordHash,
+        passwordHash: passwordHash || undefined,
       });
 
       return response.status(200).json({ ...SUCCESS_UPDATED_ITEM, data: user });

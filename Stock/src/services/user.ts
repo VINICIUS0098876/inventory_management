@@ -106,27 +106,38 @@ type UpdateUserResult =
   | typeof ERROR_REQUIRED_FIELDS
   | typeof ERROR_INTERNAL_SERVER_DB;
 
+interface UpdateUserData {
+  name: string;
+  email: string;
+  passwordHash?: string;
+}
+
 export class UpdateUserService {
   async execute(
     id_user: number,
-    { name, email, passwordHash }: User
+    { name, email, passwordHash }: UpdateUserData
   ): Promise<UpdateUserResult> {
-    if (!id_user || !name || !email || !passwordHash) {
+    if (!id_user || !name || !email) {
       return ERROR_REQUIRED_FIELDS;
     }
 
-    const password = await bcrypt.hash(passwordHash, 10);
-
     try {
+      const updateData: { name: string; email: string; passwordHash?: string } =
+        {
+          name,
+          email,
+        };
+
+      // Só atualiza a senha se uma nova foi fornecida
+      if (passwordHash && passwordHash.trim() !== "") {
+        updateData.passwordHash = await bcrypt.hash(passwordHash, 10);
+      }
+
       const user = await prismaClient.users.update({
         where: {
           id_user: id_user,
         },
-        data: {
-          name,
-          email,
-          passwordHash: password,
-        },
+        data: updateData,
       });
 
       return user;
