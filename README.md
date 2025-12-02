@@ -1,4 +1,3 @@
-# EM MANUTENÇÃO!
 # 📦 Inventory Management — Aplicação Full Stack de Gestão de Stock
 
 Bem-vindo ao **Inventory Management**, uma solução Full Stack robusta para gestão de inventário pessoal! Esta aplicação permite que qualquer utilizador registe-se, faça login de forma segura e administre o seu stock com uma experiência visual moderna e poderosa.
