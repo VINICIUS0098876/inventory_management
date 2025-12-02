@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import Sidebar from "./Sidebar";
 import {
   getProducts,
@@ -29,6 +31,11 @@ import {
   Package,
   AlertCircle,
   Loader2,
+  Search,
+  AlertTriangle,
+  DollarSign,
+  TrendingDown,
+  Download,
 } from "lucide-react";
 
 const productSchema = z.object({
@@ -50,7 +57,13 @@ const productSchema = z.object({
     }),
 });
 
-const Home = ({ user, onProfileClick, onLogout }) => {
+const Home = ({
+  user,
+  onProfileClick,
+  onLogout,
+  onGraficosClick,
+  onHomeClick,
+}) => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,6 +71,12 @@ const Home = ({ user, onProfileClick, onLogout }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filtrar produtos pelo termo de busca
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const {
     register: registerCreate,
@@ -166,12 +185,123 @@ const Home = ({ user, onProfileClick, onLogout }) => {
     setIsEditModalOpen(true);
   };
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const dataAtual = new Date().toLocaleDateString("pt-BR");
+    const horaAtual = new Date().toLocaleTimeString("pt-BR");
+
+    // Título
+    doc.setFontSize(20);
+    doc.setTextColor(37, 99, 235); // Azul
+    doc.text("Relatório de Estoque", 14, 22);
+
+    // Subtítulo com data
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Gerado em: ${dataAtual} às ${horaAtual}`, 14, 30);
+
+    // Linha separadora
+    doc.setDrawColor(37, 99, 235);
+    doc.line(14, 34, 196, 34);
+
+    // KPIs
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    const totalProdutos = products.length;
+    const valorTotal = products.reduce(
+      (acc, p) => acc + Number(p.preco) * Number(p.quantidade),
+      0
+    );
+    const itensCriticos = products.filter((p) => p.quantidade < 5).length;
+
+    doc.text(`Total de Produtos: ${totalProdutos}`, 14, 44);
+    doc.text(
+      `Valor Total em Estoque: R$ ${valorTotal.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+      })}`,
+      14,
+      52
+    );
+    doc.setTextColor(
+      itensCriticos > 0 ? 220 : 0,
+      itensCriticos > 0 ? 38 : 0,
+      itensCriticos > 0 ? 38 : 0
+    );
+    doc.text(`Itens Críticos (< 5 unidades): ${itensCriticos}`, 14, 60);
+
+    // Tabela de produtos
+    const tableData = products.map((product, index) => [
+      index + 1,
+      product.name,
+      product.quantidade,
+      `R$ ${Number(product.preco).toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+      })}`,
+      `R$ ${(Number(product.preco) * Number(product.quantidade)).toLocaleString(
+        "pt-BR",
+        { minimumFractionDigits: 2 }
+      )}`,
+      product.quantidade < 5 ? "BAIXO" : "OK",
+    ]);
+
+    autoTable(doc, {
+      startY: 70,
+      head: [["#", "Produto", "Qtd", "Preço Unit.", "Valor Total", "Status"]],
+      body: tableData,
+      theme: "striped",
+      headStyles: {
+        fillColor: [37, 99, 235],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      bodyStyles: {
+        textColor: 50,
+      },
+      alternateRowStyles: {
+        fillColor: [245, 247, 250],
+      },
+      columnStyles: {
+        0: { halign: "center", cellWidth: 15 },
+        2: { halign: "center" },
+        3: { halign: "right" },
+        4: { halign: "right" },
+        5: { halign: "center" },
+      },
+      didParseCell: function (data) {
+        if (data.column.index === 5 && data.cell.raw === "BAIXO") {
+          data.cell.styles.textColor = [220, 38, 38];
+          data.cell.styles.fontStyle = "bold";
+        }
+      },
+    });
+
+    // Rodapé
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text(
+        `Página ${i} de ${pageCount} - Sistema de Gestão de Estoque`,
+        doc.internal.pageSize.width / 2,
+        doc.internal.pageSize.height - 10,
+        { align: "center" }
+      );
+    }
+
+    // Download
+    doc.save(`relatorio-estoque-${dataAtual.replace(/\//g, "-")}.pdf`);
+  };
+
   return (
     <div className="fixed inset-0 flex overflow-hidden bg-gray-50">
       <Sidebar
         user={user}
         onProfileClick={onProfileClick}
         onLogout={onLogout}
+        onHomeClick={onHomeClick}
+        onGraficosClick={onGraficosClick}
+        currentPage="home"
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -184,13 +314,33 @@ const Home = ({ user, onProfileClick, onLogout }) => {
               </h1>
               <p className="text-gray-600 mt-1">Gerencie seus produtos</p>
             </div>
-            <Button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg"
-            >
-              <Plus className="mr-2 h-5 w-5" />
-              Novo Produto
-            </Button>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Buscar produto..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-64 bg-gray-50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+              <Button
+                onClick={generatePDF}
+                disabled={products.length === 0}
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg"
+              >
+                <Download className="mr-2 h-5 w-5" />
+                Baixar Relatório
+              </Button>
+              <Button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg"
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                Novo Produto
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -202,6 +352,75 @@ const Home = ({ user, onProfileClick, onLogout }) => {
               <AlertTitle>Erro</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
+          )}
+
+          {/* KPIs */}
+          {!isLoading && products.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {/* Total de Produtos */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      Total de Produtos
+                    </p>
+                    <p className="text-3xl font-bold text-gray-900 mt-1">
+                      {products.length}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-blue-100 rounded-full">
+                    <Package className="h-6 w-6 text-blue-600" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Valor Total em Estoque */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      Valor Total em Estoque
+                    </p>
+                    <p className="text-3xl font-bold text-green-600 mt-1">
+                      R${" "}
+                      {products
+                        .reduce(
+                          (acc, p) =>
+                            acc + Number(p.preco) * Number(p.quantidade),
+                          0
+                        )
+                        .toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-green-100 rounded-full">
+                    <DollarSign className="h-6 w-6 text-green-600" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Itens Críticos */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      Itens Críticos
+                    </p>
+                    <p className="text-3xl font-bold text-red-600 mt-1">
+                      {products.filter((p) => p.quantidade < 5).length}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Produtos com menos de 5 unidades
+                    </p>
+                  </div>
+                  <div className="p-3 bg-red-100 rounded-full">
+                    <TrendingDown className="h-6 w-6 text-red-600" />
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
           {isLoading ? (
@@ -225,65 +444,94 @@ const Home = ({ user, onProfileClick, onLogout }) => {
                 Cadastrar Produto
               </Button>
             </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                Nenhum produto encontrado
+              </h3>
+              <p className="text-gray-500 mb-6">Tente buscar por outro termo</p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <div
-                  key={product.id || product.id_product}
-                  className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="text-sm text-gray-500 mb-1">
-                        ID: {product.id || product.id_product}
+              {filteredProducts.map((product) => {
+                const isLowStock = product.quantidade < 5;
+                return (
+                  <div
+                    key={product.id || product.id_product}
+                    className={`bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all ${
+                      isLowStock
+                        ? "border-2 border-red-500 ring-2 ring-red-100"
+                        : "border border-gray-200"
+                    }`}
+                  >
+                    {isLowStock && (
+                      <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-red-50 rounded-lg">
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                        <span className="text-sm font-medium text-red-600">
+                          Estoque baixo!
+                        </span>
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">
-                        {product.name}
-                      </h3>
+                    )}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <div className="text-sm text-gray-500 mb-1">
+                          ID: {product.id || product.id_product}
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                          {product.name}
+                        </h3>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Quantidade:</span>
-                      <span className="text-sm font-semibold text-gray-900">
-                        {product.quantidade}
-                      </span>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Quantidade:
+                        </span>
+                        <span
+                          className={`text-sm font-semibold ${
+                            isLowStock ? "text-red-600" : "text-gray-900"
+                          }`}
+                        >
+                          {product.quantidade}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Preço:</span>
+                        <span className="text-sm font-semibold text-blue-600">
+                          R${" "}
+                          {Number(product.preco).toLocaleString("pt-BR", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Preço:</span>
-                      <span className="text-sm font-semibold text-blue-600">
-                        R${" "}
-                        {Number(product.preco).toLocaleString("pt-BR", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="flex gap-2 pt-4 border-t border-gray-200">
-                    <Button
-                      onClick={() => openEditModal(product)}
-                      size="sm"
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold shadow-lg"
-                    >
-                      <Edit className="mr-2 h-4 w-4 text-white" />
-                      <span className="text-white">Editar</span>
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        handleDeleteProduct(product.id || product.id_product)
-                      }
-                      size="sm"
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold shadow-lg"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4 text-white" />
-                      <span className="text-white">Deletar</span>
-                    </Button>
+                    <div className="flex gap-2 pt-4 border-t border-gray-200">
+                      <Button
+                        onClick={() => openEditModal(product)}
+                        size="sm"
+                        className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold shadow-lg"
+                      >
+                        <Edit className="mr-2 h-4 w-4 text-white" />
+                        <span className="text-white">Editar</span>
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          handleDeleteProduct(product.id || product.id_product)
+                        }
+                        size="sm"
+                        className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold shadow-lg"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4 text-white" />
+                        <span className="text-white">Deletar</span>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </main>

@@ -49,7 +49,14 @@ const profileSchema = z
     }
   );
 
-const Perfil = ({ user, onBack, onLogout, onUserUpdate }) => {
+const Perfil = ({
+  user,
+  onBack,
+  onLogout,
+  onUserUpdate,
+  onHomeClick,
+  onGraficosClick,
+}) => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -131,6 +138,9 @@ const Perfil = ({ user, onBack, onLogout, onUserUpdate }) => {
         user={userData || user}
         onProfileClick={() => {}}
         onLogout={onLogout}
+        onHomeClick={onHomeClick}
+        onGraficosClick={onGraficosClick}
+        currentPage="perfil"
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">

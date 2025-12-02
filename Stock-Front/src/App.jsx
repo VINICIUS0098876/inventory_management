@@ -3,12 +3,13 @@ import TelaLogin from "./components/TelaLogin";
 import TelaCadastro from "./components/TelaCadastro";
 import Home from "./components/Home";
 import Perfil from "./components/Perfil";
+import Graficos from "./components/Graficos";
 import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState("register"); // 'register' ou 'login'
-  const [currentPage, setCurrentPage] = useState("home"); // 'home' ou 'perfil'
+  const [currentPage, setCurrentPage] = useState("home"); // 'home', 'perfil' ou 'graficos'
 
   const handleLoginSuccess = (response) => {
     // Acessa o usuário dentro de response.Login.user
@@ -63,6 +64,20 @@ function App() {
         onBack={() => setCurrentPage("home")}
         onLogout={handleLogout}
         onUserUpdate={handleUserUpdate}
+        onHomeClick={() => setCurrentPage("home")}
+        onGraficosClick={() => setCurrentPage("graficos")}
+      />
+    );
+  }
+
+  if (currentPage === "graficos") {
+    return (
+      <Graficos
+        user={user}
+        onProfileClick={() => setCurrentPage("perfil")}
+        onLogout={handleLogout}
+        onHomeClick={() => setCurrentPage("home")}
+        onGraficosClick={() => setCurrentPage("graficos")}
       />
     );
   }
@@ -72,6 +87,8 @@ function App() {
       user={user}
       onProfileClick={() => setCurrentPage("perfil")}
       onLogout={handleLogout}
+      onGraficosClick={() => setCurrentPage("graficos")}
+      onHomeClick={() => setCurrentPage("home")}
     />
   );
 }

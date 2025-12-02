@@ -1,7 +1,14 @@
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Home, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const Sidebar = ({ user, onProfileClick, onLogout }) => {
+const Sidebar = ({
+  user,
+  onProfileClick,
+  onLogout,
+  onHomeClick,
+  onGraficosClick,
+  currentPage,
+}) => {
   return (
     <div className="w-64 bg-gradient-to-b from-blue-600 via-indigo-700 to-purple-800 text-white h-screen flex flex-col shadow-2xl">
       {/* Header */}
@@ -14,16 +21,44 @@ const Sidebar = ({ user, onProfileClick, onLogout }) => {
             <h2 className="font-bold text-lg text-white truncate select-none">
               {user?.name || "Usuário"}
             </h2>
-            <p className="text-sm text-white/80 truncate select-none">{user?.email || ""}</p>
+            <p className="text-sm text-white/80 truncate select-none">
+              {user?.email || ""}
+            </p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 space-y-2">
+        <Button
+          onClick={onHomeClick}
+          className={`w-full justify-start border border-white/20 h-12 rounded-lg font-semibold shadow-sm ${
+            currentPage === "home"
+              ? "bg-white/30 hover:bg-white/30 text-white"
+              : "bg-white/10 hover:bg-white/20 text-white"
+          }`}
+        >
+          <Home className="mr-3 h-5 w-5 text-white" />
+          <span className="text-white">Dashboard</span>
+        </Button>
+        <Button
+          onClick={onGraficosClick}
+          className={`w-full justify-start border border-white/20 h-12 rounded-lg font-semibold shadow-sm ${
+            currentPage === "graficos"
+              ? "bg-white/30 hover:bg-white/30 text-white"
+              : "bg-white/10 hover:bg-white/20 text-white"
+          }`}
+        >
+          <BarChart3 className="mr-3 h-5 w-5 text-white" />
+          <span className="text-white">Gráficos</span>
+        </Button>
         <Button
           onClick={onProfileClick}
-          className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border border-white/20 mb-4 h-12 rounded-lg font-semibold shadow-sm"
+          className={`w-full justify-start border border-white/20 h-12 rounded-lg font-semibold shadow-sm ${
+            currentPage === "perfil"
+              ? "bg-white/30 hover:bg-white/30 text-white"
+              : "bg-white/10 hover:bg-white/20 text-white"
+          }`}
         >
           <User className="mr-3 h-5 w-5 text-white" />
           <span className="text-white">Meu Perfil</span>
@@ -46,4 +81,3 @@ const Sidebar = ({ user, onProfileClick, onLogout }) => {
 };
 
 export default Sidebar;
-
