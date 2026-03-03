@@ -138,7 +138,7 @@ const TelaCadastro = ({ onRegisterSuccess, onNavigateToLogin }) => {
       </div>
 
       {/* Lado Direito - Formulário */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-16 bg-white">
         <div className="w-full max-w-md">
           <Card className="w-full shadow-2xl border border-gray-100 bg-white rounded-2xl">
             <CardHeader className="space-y-3 text-center pb-8 pt-8">

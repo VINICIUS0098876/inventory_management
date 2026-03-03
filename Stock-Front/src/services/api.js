@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Cria uma instância do Axios com configurações base
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
   timeout: 10000, // 10 segundos
   headers: {
     "Content-Type": "application/json",
@@ -20,7 +20,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Interceptor de resposta - trata erros globalmente
@@ -43,7 +43,7 @@ api.interceptors.response.use(
       "Erro de conexão com o servidor";
 
     return Promise.reject(new Error(message));
-  }
+  },
 );
 
 export default api;

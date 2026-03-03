@@ -159,9 +159,16 @@ export class LoginUserController {
 
     try {
       const loginUserService = new LoginUserService();
-      const login = await loginUserService.execute(email, passwordHash);
+      const result = await loginUserService.execute(email, passwordHash);
 
-      return response.status(200).json({ ...SUCCESS_LOGIN_ITEM, Login: login });
+      // Verifica se o service retornou um erro
+      if ("status" in result && result.status === false) {
+        return response.status(result.status_code).json(result);
+      }
+
+      return response
+        .status(200)
+        .json({ ...SUCCESS_LOGIN_ITEM, Login: result });
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Erro ao fazer login";

@@ -64,3 +64,13 @@ export const SUCCESS_LOGIN_ITEM = {
   status_code: 200,
   message: "Login bem-sucedido!!",
 };
+export const SUCCESS_STOCK_OUT = {
+  status: true,
+  status_code: 200,
+  message: "Baixa de estoque realizada com sucesso!!",
+};
+export const ERROR_OUT_OF_STOCK = {
+  status: false,
+  status_code: 400,
+  message: "Produto sem estoque disponível para dar baixa!!",
+};

@@ -8,16 +8,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CondicaoItem {
+  NOVO
+  REEMBALADO
+  USADO
+  DEFEITO
+}
+
 model products {
-  id_product Int      @id @default(autoincrement())
+  id_product Int          @id @default(autoincrement())
   id_user    Int?
-  name       String   @db.VarChar(255)
+  id_lote    Int?
+  name       String       @db.VarChar(255)
+  sku        String       @unique @db.VarChar(50)
+  condicao   CondicaoItem @default(NOVO)
   quantidade Int
-  preco      Float?   @db.Float
-  createdAt  DateTime @default(now()) @db.DateTime(0)
-  users      users?   @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_1")
+  preco      Float?       @db.Float
+  custo      Float?       @db.Float
+  createdAt  DateTime     @default(now()) @db.DateTime(0)
+  users      users?       @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "products_ibfk_1")
+  lote       lotes?       @relation(fields: [id_lote], references: [id_lote], onDelete: SetNull, onUpdate: NoAction, map: "products_ibfk_2")
+  kit_items  kit_items[]
 
   @@index([id_user], map: "id_user")
+  @@index([id_lote], map: "id_lote")
+}
+
+model lotes {
+  id_lote    Int        @id @default(autoincrement())
+  id_user    Int
+  nome       String     @db.VarChar(255)
+  custoTotal Float      @db.Float
+  descricao  String?    @db.VarChar(500)
+  createdAt  DateTime   @default(now()) @db.DateTime(0)
+  users      users      @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "lotes_ibfk_1")
+  products   products[]
+
+  @@index([id_user], map: "lotes_id_user")
 }
 
 model users {
@@ -26,4 +53,31 @@ model users {
   email        String     @unique(map: "email") @db.VarChar(255)
   passwordHash String     @db.VarChar(255)
   products     products[]
+  lotes        lotes[]
+  kits         kits[]
+}
+
+model kits {
+  id_kit     Int         @id @default(autoincrement())
+  id_user    Int
+  nome       String      @db.VarChar(255)
+  sku        String      @unique @db.VarChar(50)
+  precoVenda Float       @db.Float
+  createdAt  DateTime    @default(now()) @db.DateTime(0)
+  users      users       @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "kits_ibfk_1")
+  kit_items  kit_items[]
+
+  @@index([id_user], map: "kits_id_user")
+}
+
+model kit_items {
+  id_kit_item Int      @id @default(autoincrement())
+  id_kit      Int
+  id_product  Int
+  quantidade  Int
+  kit         kits     @relation(fields: [id_kit], references: [id_kit], onDelete: Cascade, onUpdate: NoAction, map: "kit_items_ibfk_1")
+  product     products @relation(fields: [id_product], references: [id_product], onDelete: Cascade, onUpdate: NoAction, map: "kit_items_ibfk_2")
+
+  @@index([id_kit], map: "kit_items_id_kit")
+  @@index([id_product], map: "kit_items_id_product")
 }

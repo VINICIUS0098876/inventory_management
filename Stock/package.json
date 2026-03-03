@@ -1,4 +1,5 @@
 {
+  "name": "stock-api",
   "type": "module",
   "dependencies": {
     "@prisma/client": "^6.19.0",

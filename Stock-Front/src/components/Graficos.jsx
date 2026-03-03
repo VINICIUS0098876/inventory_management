@@ -30,12 +30,29 @@ const COLORS = [
   "#14B8A6", // teal-500
 ];
 
+const CONDICAO_COLORS = {
+  NOVO: "#22C55E",
+  REEMBALADO: "#EAB308",
+  USADO: "#F97316",
+  DEFEITO: "#EF4444",
+};
+
+const CONDICAO_LABELS = {
+  NOVO: "Novo",
+  REEMBALADO: "Reembalado",
+  USADO: "Usado",
+  DEFEITO: "Defeito",
+};
+
 const Graficos = ({
   user,
   onProfileClick,
   onLogout,
   onHomeClick,
   onGraficosClick,
+  onBaixaClick,
+  onLotesClick,
+  onKitsClick,
 }) => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -97,6 +114,19 @@ const Graficos = ({
     0
   );
 
+  // Dados para o gráfico de distribuição por condição
+  const condicaoData = Object.entries(
+    products.reduce((acc, product) => {
+      const cond = product.condicao || "NOVO";
+      acc[cond] = (acc[cond] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([key, value]) => ({
+    name: CONDICAO_LABELS[key] || key,
+    quantidade: value,
+    key,
+  }));
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -125,18 +155,21 @@ const Graficos = ({
         onLogout={onLogout}
         onHomeClick={onHomeClick}
         onGraficosClick={onGraficosClick}
+        onBaixaClick={onBaixaClick}
+        onLotesClick={onLotesClick}
+        onKitsClick={onKitsClick}
         currentPage="graficos"
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-8 py-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+        <header className="bg-white border-b border-gray-200 px-4 py-4 md:px-8 md:py-6 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="pl-10 md:pl-0">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Gráficos
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 mt-1 text-sm md:text-base">
                 Visualize seus dados de estoque
               </p>
             </div>
@@ -168,7 +201,7 @@ const Graficos = ({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
           {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
@@ -186,28 +219,28 @@ const Graficos = ({
           ) : (
             <>
               {/* KPIs Resumo */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                  <p className="text-sm font-medium text-gray-500">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6">
+                  <p className="text-xs sm:text-sm font-medium text-gray-500">
                     Total de Produtos
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">
+                  <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1">
                     {totalProdutos}
                   </p>
                 </div>
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                  <p className="text-sm font-medium text-gray-500">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6">
+                  <p className="text-xs sm:text-sm font-medium text-gray-500">
                     Total de Unidades
                   </p>
-                  <p className="text-3xl font-bold text-blue-600 mt-1">
+                  <p className="text-2xl md:text-3xl font-bold text-blue-600 mt-1">
                     {totalUnidades}
                   </p>
                 </div>
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                  <p className="text-sm font-medium text-gray-500">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6">
+                  <p className="text-xs sm:text-sm font-medium text-gray-500">
                     Valor Total em Estoque
                   </p>
-                  <p className="text-3xl font-bold text-green-600 mt-1">
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-600 mt-1 truncate">
                     R${" "}
                     {valorTotal.toLocaleString("pt-BR", {
                       minimumFractionDigits: 2,
@@ -217,10 +250,10 @@ const Graficos = ({
               </div>
 
               {/* Gráficos */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
                 {/* Gráfico de Quantidade */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6">
+                  <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">
                     Quantidade por Produto
                   </h3>
                   <div className={chartType === "bar" ? "h-80" : "h-64"}>
@@ -303,8 +336,8 @@ const Graficos = ({
                 </div>
 
                 {/* Gráfico de Valor em Estoque */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6">
+                  <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">
                     Valor em Estoque por Produto
                   </h3>
                   <div className={chartType === "bar" ? "h-80" : "h-64"}>
@@ -394,6 +427,59 @@ const Graficos = ({
                       </div>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Gráfico de Distribuição por Condição */}
+              <div className="mt-6 md:mt-8 bg-white rounded-xl shadow-lg border border-gray-200 p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">
+                  Distribuição por Condição
+                </h3>
+                <div className="h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={condicaoData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+                                <p className="font-semibold text-gray-900">
+                                  {payload[0].payload.name}
+                                </p>
+                                <p className="text-blue-600">
+                                  {payload[0].value} produto(s)
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar dataKey="quantidade" name="Produtos" radius={[4, 4, 0, 0]}>
+                        {condicaoData.map((entry) => (
+                          <Cell
+                            key={entry.key}
+                            fill={CONDICAO_COLORS[entry.key] || "#3B82F6"}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-4 justify-center">
+                  {condicaoData.map((entry) => (
+                    <div key={entry.key} className="flex items-center gap-2 text-sm">
+                      <div
+                        className="w-3 h-3 rounded-full shrink-0"
+                        style={{ backgroundColor: CONDICAO_COLORS[entry.key] || "#3B82F6" }}
+                      />
+                      <span className="text-gray-700">{entry.name}</span>
+                      <span className="text-gray-500">({entry.quantidade})</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </>

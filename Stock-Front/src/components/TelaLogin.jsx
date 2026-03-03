@@ -50,14 +50,18 @@ const TelaLogin = ({ onLoginSuccess, onNavigateToRegister }) => {
     try {
       const response = await login(data.email, data.password);
 
-      // Salva o token no localStorage
+      // Verifica se o login retornou um token válido
       if (response.Login?.token) {
         localStorage.setItem("token", response.Login.token);
-      }
 
-      // Chama callback de sucesso se fornecido
-      if (onLoginSuccess) {
-        onLoginSuccess(response);
+        // Chama callback de sucesso apenas com token válido
+        if (onLoginSuccess) {
+          onLoginSuccess(response);
+        }
+      } else {
+        setError(
+          response.message || "Erro ao realizar login. Tente novamente.",
+        );
       }
     } catch (err) {
       setError(err.message || "Erro ao realizar login. Tente novamente.");
@@ -131,7 +135,7 @@ const TelaLogin = ({ onLoginSuccess, onNavigateToRegister }) => {
       </div>
 
       {/* Lado Direito - Formulário */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 lg:p-16 bg-white">
         <div className="w-full max-w-md">
           <Card className="w-full shadow-2xl border border-gray-100 bg-white rounded-2xl">
             <CardHeader className="space-y-3 text-center pb-8 pt-8">

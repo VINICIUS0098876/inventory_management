@@ -12,7 +12,7 @@ export const getProducts = async () => {
 
 /**
  * Cria um novo produto
- * @param {object} productData - Dados do produto (name, quantidade, preco)
+ * @param {object} productData - Dados do produto (name, quantidade, preco, custo, condicao)
  * @returns {Promise<object>} - Produto criado
  * @throws {Error} - Erro caso a criação falhe
  */
@@ -41,5 +41,19 @@ export const updateProduct = async (productId, productData) => {
  */
 export const deleteProduct = async (productId) => {
   const { data } = await api.delete(`/product/${productId}`);
+  return data;
+};
+
+/**
+ * Dá baixa no estoque de um produto (saída rápida)
+ * @param {number} productId - ID do produto
+ * @param {number} quantidade - Quantidade a dar baixa (padrão: 1)
+ * @returns {Promise<object>} - Produto atualizado
+ * @throws {Error} - Erro caso a baixa falhe
+ */
+export const stockOut = async (productId, quantidade = 1) => {
+  const { data } = await api.patch(`/product/${productId}/baixa`, {
+    quantidade,
+  });
   return data;
 };

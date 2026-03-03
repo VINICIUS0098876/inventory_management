@@ -11,6 +11,7 @@ Bem-vindo ao **Inventory Management**, uma solução Full Stack completa para ge
 O **Inventory Management** oferece um painel intuitivo combinando tecnologias web de ponta.
 
 ### ✨ Novas Implementações (v2.0):
+
 - 📈 **Dashboard Visual:** Gráficos interativos (via Recharts) para análise de distribuição de produtos.
 - 🔢 **KPIs em Tempo Real:** Cards de resumo que mostram o Valor Total do Estoque e Quantidade de Itens instantaneamente.
 - ⚠️ **Alertas Inteligentes:** Indicadores visuais automáticos para produtos com **estoque baixo**.
@@ -18,6 +19,7 @@ O **Inventory Management** oferece um painel intuitivo combinando tecnologias we
 - 📄 **Exportação de Dados:** Funcionalidade para gerar relatórios em **Excel/PDF**.
 
 ### ⚙️ Funcionalidades Core:
+
 - 🔐 **Autenticação Robusta:** Login e Cadastro seguros com JWT e bcrypt.
 - 📝 **CRUD Completo:** Criação, Leitura, Atualização e Exclusão de produtos.
 - ⚡ **UX Aprimorada:** Feedback visual com Toasts, Loaders e validações de formulário com **Zod**.
@@ -50,18 +52,21 @@ Arquitetura: **Service Layer Pattern**
 ## 🖼️ Galeria do Projeto
 
 ### 🔐 Autenticação
-| Tela de Login | Tela de Cadastro |
-|:---:|:---:|
+
+|                     Tela de Login                      |                       Tela de Cadastro                       |
+| :----------------------------------------------------: | :----------------------------------------------------------: |
 | ![Login Screenshot](Stock-Front/screenshots/login.png) | ![Cadastro Screenshot](Stock-Front/screenshots/cadastro.png) |
 
 ### 📊 Dashboard e Analytics
-| Visão Geral do Estoque | Gráficos e Métricas |
-|:---:|:---:|
+
+|                     Visão Geral do Estoque                     |                    Gráficos e Métricas                     |
+| :------------------------------------------------------------: | :--------------------------------------------------------: |
 | ![Dashboard Screenshot](Stock-Front/screenshots/dashboard.png) | ![Gráfico Screenshot](Stock-Front/screenshots/grafico.png) |
 
 ### 👤 Área do Usuário
-| Perfil |
-|:---:|
+
+|                           Perfil                           |
+| :--------------------------------------------------------: |
 | ![Profile Screenshot](Stock-Front/screenshots/profile.png) |
 
 ---
@@ -75,11 +80,7 @@ Arquitetura: **Service Layer Pattern**
 
 ## 🛠️ Guia de Instalação
 
-
-
 ### 1. **Clonar o projeto**
-
-
 
 ```bash
 
@@ -89,29 +90,19 @@ cd inventory_management
 
 ```
 
-
-
 ---
-
-
 
 ### 2. **Configuração do Back-end**
 
-
-
 ```bash
 
-cd backend
+cd Stock
 
 cp .env.example .env  # Crie seu arquivo de variáveis de ambiente
 
 ```
 
-
-
 Edite o ficheiro `.env` com suas credenciais:
-
-
 
 ```env
 
@@ -121,11 +112,7 @@ JWT_SECRET="um-segredo-superseguro"
 
 ```
 
-
-
 **Instale as dependências:**
-
-
 
 ```bash
 
@@ -133,11 +120,7 @@ npm install
 
 ```
 
-
-
 **Execute as migrations Prisma:**
-
-
 
 ```bash
 
@@ -145,11 +128,7 @@ npx prisma migrate dev
 
 ```
 
-
-
 **Inicie o servidor:**
-
-
 
 ```bash
 
@@ -157,45 +136,29 @@ npm run dev
 
 ```
 
-
-
-O Back-end estará disponível (ex: `http://localhost:3333`).
-
-
+O Back-end estará disponível em `http://localhost:3000`.
 
 ---
 
-
-
 ### 3. **Configuração do Front-end**
-
-
 
 ```bash
 
-cd ../frontend
+cd ../Stock-Front
 
 cp .env.example .env  # Configure a URL do Back-end
 
 ```
 
-
-
 Edite o `.env`:
-
-
 
 ```env
 
-VITE_API_URL="http://localhost:3333"
+VITE_API_URL="http://localhost:3000"
 
 ```
 
-
-
 **Instale as dependências:**
-
-
 
 ```bash
 
@@ -203,11 +166,7 @@ npm install
 
 ```
 
-
-
 **Inicie o Front-end:**
-
-
 
 ```bash
 
@@ -215,49 +174,33 @@ npm run dev
 
 ```
 
-
-
 A aplicação estará disponível em `http://localhost:5173`
-
-
 
 ---
 
-
-
 ## 🤝 Como Contribuir
-
-
 
 1. Faça um fork do projeto
 
-2. Crie um branch para sua feature ou correção:  
+2. Crie um branch para sua feature ou correção:
 
    `git checkout -b feature/nome-sua-feature`
 
-3. Commit suas alterações:  
+3. Commit suas alterações:
 
    `git commit -m 'feat: Minha nova feature'`
 
-4. Faça push do branch:  
+4. Faça push do branch:
 
    `git push origin feature/nome-sua-feature`
 
 5. Abra um Pull Request neste repositório e aguarde a revisão! 🙌
 
-
-
 ---
-
-
 
 ## 📄 Licença
 
-
-
 Este projeto está licenciado sob a [MIT License](LICENSE).
-
-
 
 ---
 

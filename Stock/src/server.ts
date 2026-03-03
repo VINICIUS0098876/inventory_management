@@ -8,14 +8,16 @@ dotenv.config();
 
 const app = Express();
 
+const PORT = Number(process.env.PORT) || 3000;
+
 const start = async function () {
   app.use(cors());
   app.use(BodyParser.json());
   app.use(router);
 
   try {
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
     console.log("Error starting server:", error);

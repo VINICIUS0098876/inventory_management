@@ -160,6 +160,13 @@ export class DeleteUserService {
     }
 
     try {
+      // Deleta todos os produtos do usuário antes de deletar o usuário
+      await prismaClient.products.deleteMany({
+        where: {
+          id_user: id_user,
+        },
+      });
+
       const user = await prismaClient.users.delete({
         where: {
           id_user: id_user,
