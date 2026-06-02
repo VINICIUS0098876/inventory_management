@@ -1,9 +1,9 @@
 {
-  "compilerOptions": {
+"compilerOptions": {
     /* Configurações Principais */
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ES2022", 
+    "moduleResolution": "bundler",
     
     /* Pastas */
     "rootDir": "./src",
