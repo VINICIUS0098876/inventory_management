@@ -10,10 +10,6 @@ jobs:
   rodar-testes:
     runs-on: ubuntu-latest # Ele liga um mini-servidor Linux na nuvem
 
-    defaults:
-      run:
-        working-directory: ./Stock
-
     steps:
       # A) Baixa o código da sua feature para o servidor
       - name: Checkout do código
