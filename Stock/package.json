@@ -2,6 +2,7 @@
   "name": "stock-api",
   "type": "module",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.19.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
@@ -11,6 +12,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "node-cron": "^4.2.1",
     "prisma": "^6.19.0"
   },
   "devDependencies": {
