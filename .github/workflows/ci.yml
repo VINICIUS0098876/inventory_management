@@ -1,0 +1,30 @@
+name: CI Pipeline de Testes
+
+# 1. Quando este robô deve trabalhar?
+on:
+  pull_request:
+    branches: [ develop, main ] # Vai rodar sempre que você tentar jogar código novo nessas branches
+
+# 2. O que ele deve fazer?
+jobs:
+  rodar-testes:
+    runs-on: ubuntu-latest # Ele liga um mini-servidor Linux na nuvem
+
+    steps:
+      # A) Baixa o código da sua feature para o servidor
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      # B) Instala o Node.js no servidor
+      - name: Configura o Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.x' # Usando a versão moderna que suporta o seu TypeScript
+
+      # C) Roda o famoso npm install (para baixar o Jest e outras bibliotecas lá na nuvem)
+      - name: Instala as dependências
+        run: npm install
+
+      # D) O Grande Momento: Roda o seu teste!
+      - name: Executa os testes
+        run: npm test
